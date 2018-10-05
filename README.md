@@ -104,7 +104,13 @@ $ docker push registry.ng.bluemix.net/<YOUR_NAMESPACE>/send-notification
 
 ### 9. Deploy the Microservices
 
-x
+* Modify *compute-interest-api.yaml* and *send-notification.yaml* to use your image
+```yaml
+# compute-interest-api.yaml
+  spec:
+    containers:
+      - image: registry.ng.bluemix.net/<namespace>/compute-interest-api # replace with your image name
+```
 ```yaml
 # send-notification.yaml
   spec:
