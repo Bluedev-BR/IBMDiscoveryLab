@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: send-notification
+  labels:
+    app: office-space
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: office-space
+    tier: notification
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: send-notification
+  labels:
+    app: office-space
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: office-space
+        tier: notification
+    spec:
+      containers:
+        - image: registry.ng.bluemix.net/<YOUR_NAMESPACE>/send-notification
+          imagePullPolicy: Always
+          name: send-notification
+          env:
+            - name: GMAIL_SENDER_USER
+              value: 'username@gmail.com' # change this to the gmail that will send the email
+            - name: GMAIL_SENDER_PASSWORD
+              value: 'password' # change this to the the password of the gmail above
+            - name: EMAIL_RECEIVER
+              value: 'sendTo@gmail.com' # change this to the email of the receiver
+            - name: OPENWHISK_API_URL_SLACK
+              value: ''
+            - name: NOTIFICATION_MESSAGE
+              value: 'Your balance is over $50,000.00'
+            - name: OPENWHISK_API_URL_EMAIL
+              value: ''
+          ports:
+            - containerPort: 8080

@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microservice-speaker-sample
+  labels:
+    app: microprofile-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: speaker-deployment
+    spec:
+      containers:
+      - name: microservice-speaker
+        #change the image name
+        image: journeycode/microservice-ol-speaker
+        ports:
+          - containerPort: 9080
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: speaker-service
+  labels:
+    app: microprofile-app
+spec:
+  type: NodePort
+  ports:
+    - port: 9080
+      targetPort: 9080
+      nodePort: 31000
+  selector:
+    name: speaker-deployment

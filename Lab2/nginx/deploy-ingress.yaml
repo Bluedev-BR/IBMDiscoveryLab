@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: custom-ingress-sample
+  labels:
+    app: microprofile-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: custom-ingress-deployment
+    spec:
+      containers:
+      - name: custom-ingress
+        #change the image name
+        image: registry.ng.bluemix.net/<namespace>/custom-nginx
+        ports:
+          - containerPort: 80
+        imagePullPolicy: IfNotPresent 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: custom-ingress-service
+  labels:
+    app: microprofile-app
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31200
+  selector:
+    name: custom-ingress-deployment
